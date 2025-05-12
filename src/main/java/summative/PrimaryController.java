@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
@@ -78,10 +79,13 @@ public class PrimaryController {
     }
 
     @FXML
-    void onRevertImage(ActionEvent event) {
-        PixelReader reader = imageView.getImage().getPixelReader();
-
+    void onRestore(ActionEvent event) {
         imageView.setImage(originalImage);
+    }
+
+    @FXML
+    void onExit(ActionEvent event) {
+        System.exit(1);
     }
 
     @FXML
@@ -119,7 +123,7 @@ public class PrimaryController {
     }
 
     @FXML
-    void onRotate(ActionEvent event) {
+    void onRotation(ActionEvent event) {
         int width = (int) imageView.getImage().getWidth();
         int height = (int) imageView.getImage().getHeight();
 
@@ -134,29 +138,187 @@ public class PrimaryController {
         }
         imageView.setImage(writableImage);
     }
-    
-    // private int[] getColor(int x, int y) {
 
-    // }
+    @FXML
+    void onGrayScale(ActionEvent event) {
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
 
-    // @FXML
-    // void onINSERTHERE(ActionEvent event) {
-    //     int width = (int) imageView.getImage().getWidth();
-    //     int height = (int) imageView.getImage().getHeight();
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
 
-    //     WritableImage writableImage = new WritableImage(width, height);
-    //     PixelReader reader = imageView.getImage().getPixelReader();
-    //     PixelWriter writer = writableImage.getPixelWriter();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Color color = reader.getColor(x, y);
+                double red = color.getRed();
+                double green = color.getGreen();
+                double blue = color.getBlue();
+                double gray = red * 0.21 + green * 0.71 + blue * 0.07;
 
-    //     for (int x = 0; x < width; x++) {
-    //         for (int y = 0; y < height; y++) {
-    //             Color color = reader.getColor(x, y); // Color is an object
-    //             double red = color.getRed();
-    //             double green = color.getGreen();
-    //             double blue = color.getBlue();
-    //         }
-    //     }
-    // }
+                Color newColor = new Color(gray, gray, gray,
+                        color.getOpacity());
+                writer.setColor(x, y, newColor);
+            }
+        }
+        imageView.setImage(writableImage);
+    }
+
+    @FXML
+    void onSepiaTone(ActionEvent event) {
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Color color = reader.getColor(x, y);
+                double red = color.getRed();
+                double green = color.getGreen();
+                double blue = color.getBlue();
+
+                double newRed = 0.393 * red + 0.769 * green + 0.189 * blue;
+                double newGreen = 0.394 * red + 0.686 * green + 0.168 * blue;
+                double newBlue = 0.272 * red + 0.534 * green + 0.131 * blue;
+
+                Color newColor = new Color(Math.min(newRed, 1.0), Math.min(newGreen, 1.0), Math.min(newBlue, 1.0),
+                        color.getOpacity());
+                writer.setColor(x, y, newColor);
+            }
+        }
+        imageView.setImage(writableImage);
+    }
+
+    @FXML
+    void onInvertColor(ActionEvent event) {
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Color color = reader.getColor(x, y);
+                double red = color.getRed();
+                double green = color.getGreen();
+                double blue = color.getBlue();
+
+                Color newColor = new Color(1.0 - red, 1.0 - green, 1.0 - blue,
+                        color.getOpacity());
+                writer.setColor(x, y, newColor);
+            }
+        }
+        imageView.setImage(writableImage);
+    }
+
+    @FXML
+    void onBrightness(ActionEvent event) {
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+        double brightness = 0.2; // brightness addition between 0 and 1
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Color color = reader.getColor(x, y);
+                double red = color.getRed();
+                double green = color.getGreen();
+                double blue = color.getBlue();
+
+                Color newColor = new Color(Math.min(red + brightness, 1.0), Math.min(green + brightness, 1.0),
+                        Math.min(blue + brightness, 1.0),
+                        color.getOpacity());
+                writer.setColor(x, y, newColor);
+            }
+        }
+        imageView.setImage(writableImage);
+    }
+
+    @FXML
+    void onBulge(ActionEvent event) {
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+        double cx = width / 2;
+        double cy = height / 2;
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                double p = 1.6;
+                double s = 30;
+
+                double dx = x - cx;
+                double dy = y - cy;
+                double r = Math.sqrt(dx * dx + dy * dy);
+                double theta = Math.atan2(dy, dx);
+                double rPrime = Math.pow(r, p) / s;
+                int xPrime = (int) (cx + rPrime * Math.cos(theta));
+                int yPrime = (int) (cy + rPrime * Math.sin(theta));
+
+                if (xPrime >= 0 && xPrime < width) {
+                    if (yPrime >= 0 && yPrime < height) {
+                        writer.setColor(x, y, reader.getColor(xPrime, yPrime));
+                    }
+                }
+                imageView.setImage(writableImage);
+            }
+        }
+    }
+
+    @FXML
+    void onColorOverlay(ActionEvent event) {
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Color color = reader.getColor(x, y);
+                Color overlay = Color.BLUEVIOLET;
+
+                writer.setColor(x, y, color.interpolate(overlay, 0.5));
+            }
+        }
+        imageView.setImage(writableImage);
+    }
+
+    @FXML
+    void onPixelation(ActionEvent event) {
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+        int blockSize = 10;
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        for (int x = 0; x < width; x = +blockSize) {
+            for (int y = 0; y < height; y = +blockSize) {
+                Color color = reader.getColor(x, y);
+
+                for (int i = 0; i < blockSize; i++) {
+                    for (int j = 0; j < blockSize; j++) {
+                        writer.setColor(i, j, color);
+                    }
+                }
+            }
+        }
+        imageView.setImage(writableImage);
+    }
 
     /*
      * Accessing a pixels colors
@@ -176,17 +338,17 @@ public class PrimaryController {
 
     // @FXML
     // void onDraw(ActionEvent event) {
-    //     int width = (int) imageView.getImage().getWidth();
-    //     int height = (int) imageView.getImage().getHeight();
+    // int width = (int) imageView.getImage().getWidth();
+    // int height = (int) imageView.getImage().getHeight();
 
-    //     WritableImage writableImage = new WritableImage(width, height);
-    //     PixelReader reader = imageView.getImage().getPixelReader();
-    //     PixelWriter writer = writableImage.getPixelWriter();
+    // WritableImage writableImage = new WritableImage(width, height);
+    // PixelReader reader = imageView.getImage().getPixelReader();
+    // PixelWriter writer = writableImage.getPixelWriter();
 
-    //     // where cursor pixel (x,y), 
-    //     // writer.setColor(5 pixels around, reader.getColor (colorhere);
+    // // where cursor pixel (x,y),
+    // // writer.setColor(5 pixels around, reader.getColor (colorhere);
 
-    //     imageView.setImage(writableImage);
+    // imageView.setImage(writableImage);
     // }
 
     // DO NOT REMOVE THIS METHOD!

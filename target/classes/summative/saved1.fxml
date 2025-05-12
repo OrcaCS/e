@@ -69,13 +69,6 @@
                   <MenuItem fx:id="brightness" mnemonicParsing="false" onAction="#onBrightness" text="Brightness" />
               </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Effect">
-              <items>
-                <MenuItem fx:id="bulge" mnemonicParsing="false" onAction="#onBulge" text="Bulge" />
-                  <MenuItem fx:id="colorOverlay" mnemonicParsing="false" onAction="#onColorOverlay" text="Color Overlay" />
-                  <MenuItem fx:id="pixelation" mnemonicParsing="false" onAction="#onPixelation" text="Pixelation" />
-              </items>
-            </Menu>
       </menus>
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">

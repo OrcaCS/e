@@ -49,11 +49,31 @@
                   <MenuItem fx:id="openImage" mnemonicParsing="false" onAction="#onOpenImage" text="Open" />
                   <MenuItem fx:id="saveImage" mnemonicParsing="false" onAction="#onSaveImage" text="Save As" />
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="restore" mnemonicParsing="false" onAction="#onRestore" text="Restore to Original" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="exit" mnemonicParsing="false" onAction="#onExit" text="Exit" />
                </items>
         </Menu>
             <Menu mnemonicParsing="false" text="Transformation">
               <items>
                 <MenuItem fx:id="horizontalFlip" mnemonicParsing="false" onAction="#onHorizontalFlip" text="Horizontal Flip" />
+                  <MenuItem fx:id="verticalFlip" mnemonicParsing="false" onAction="#onVerticalFlip" text="Vertical Flip" />
+                  <MenuItem fx:id="rotation" mnemonicParsing="false" onAction="#onRotation" text="Rotation" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Color">
+              <items>
+                <MenuItem fx:id="grayScale" mnemonicParsing="false" onAction="#onGrayScale" text="Gray Scale" />
+                  <MenuItem fx:id="sepiaTone" mnemonicParsing="false" onAction="#onSepiaTone" text="Sepia Tone" />
+                  <MenuItem fx:id="invertColor" mnemonicParsing="false" onAction="#onInvertColor" text="Invert Color" />
+                  <MenuItem fx:id="brightness" mnemonicParsing="false" onAction="#onBrightness" text="Brightness" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Effect">
+              <items>
+                <MenuItem fx:id="bulge" mnemonicParsing="false" onAction="#onBulge" text="Bulge" />
+                  <MenuItem fx:id="colorOverlay" mnemonicParsing="false" onAction="#onColorOverlay" text="Color Overlay" />
+                  <MenuItem fx:id="pixelation" mnemonicParsing="false" onAction="#onPixelation" text="Pixelation" />
               </items>
             </Menu>
       </menus>
