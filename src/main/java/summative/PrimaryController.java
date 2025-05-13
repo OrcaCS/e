@@ -306,12 +306,12 @@ public class PrimaryController {
         PixelReader reader = imageView.getImage().getPixelReader();
         PixelWriter writer = writableImage.getPixelWriter();
 
-        for (int x = 0; x < width; x = +blockSize) {
-            for (int y = 0; y < height; y = +blockSize) {
+        for (int x = 0; x < width; x += blockSize) {
+            for (int y = 0; y < height; y += blockSize) {
                 Color color = reader.getColor(x, y);
 
-                for (int i = 0; i < blockSize; i++) {
-                    for (int j = 0; j < blockSize; j++) {
+                for (int i = x; i < i + blockSize && i + blockSize < height; i++) {
+                    for (int j = y; j < j + blockSize && j + blockSize < width; j++) {
                         writer.setColor(i, j, color);
                     }
                 }
