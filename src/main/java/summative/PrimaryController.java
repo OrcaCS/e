@@ -23,7 +23,7 @@ public class PrimaryController {
     private Image originalImage; // Use this to keep track of the original image
 
     @FXML
-    private ImageView imageView;
+    private ImageView imageView; // OY HEY OI ORCA. NOTE TO SELF ADD THESE FOR NEW METHODS
 
     @FXML
     private MenuItem openImage;
@@ -318,6 +318,29 @@ public class PrimaryController {
             }
         }
         imageView.setImage(writableImage);
+    }
+
+    @FXML
+    void onVignette(ActionEvent event) {
+        double minimumBrightness = 0.3;
+
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+        double cx = width / 2;
+        double cy = height / 2;
+        double max = Math.sqrt(cx * cx + cy * cy);
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelWriter writer = writableImage.getPixelWriter();
+        
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                double distance = Math.sqrt(Math.pow(x - cx, 2) + Math.pow(y - cy, 2));
+                double brightness = Math.max(1 - distance / max, minimumBrightness);
+                Color derivedColor = Color.deriveColor(0.0, 1.0, 1.0, brightness);
+                writer.setColor(x, y, derivedColor);
+            }
+        }
     }
 
     /*
