@@ -124,16 +124,29 @@ public class PrimaryController {
 
     @FXML
     void onRotation(ActionEvent event) {
+        double rotationAngle = Math.toRadians(90);
+
         int width = (int) imageView.getImage().getWidth();
         int height = (int) imageView.getImage().getHeight();
+        double cx = width / 2;
+        double cy = height / 2;
 
         WritableImage writableImage = new WritableImage(width, height);
         PixelReader reader = imageView.getImage().getPixelReader();
         PixelWriter writer = writableImage.getPixelWriter();
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                writer.setColor(j, height - i - 1, reader.getColor(i, j));
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                double dx = x - cx;
+                double dy = y - cy;
+                int xPrime = (int) (dx * Math.cos(rotationAngle) - dy * Math.sin(rotationAngle) + cx);
+                int yPrime = (int) (dx * Math.sin(rotationAngle) - dy * Math.cos(rotationAngle) + cy);
+
+                if (xPrime >= 0 && xPrime < width) {
+                    if (yPrime >= 0 && yPrime < height) {
+                        writer.setColor(x, y, reader.getColor(xPrime, yPrime));
+                    }
+                }
             }
         }
         imageView.setImage(writableImage);
@@ -271,9 +284,9 @@ public class PrimaryController {
                         writer.setColor(x, y, reader.getColor(xPrime, yPrime));
                     }
                 }
-                imageView.setImage(writableImage);
             }
         }
+        imageView.setImage(writableImage);
     }
 
     @FXML
@@ -331,14 +344,50 @@ public class PrimaryController {
         double max = Math.sqrt(cx * cx + cy * cy);
 
         WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
         PixelWriter writer = writableImage.getPixelWriter();
-        
+
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
+                Color color = reader.getColor(x, y);
+
                 double distance = Math.sqrt(Math.pow(x - cx, 2) + Math.pow(y - cy, 2));
                 double brightness = Math.max(1 - distance / max, minimumBrightness);
-                Color derivedColor = Color.deriveColor(0.0, 1.0, 1.0, brightness);
+                Color derivedColor = color.deriveColor(0.0, 1.0, 1.0, brightness);
                 writer.setColor(x, y, derivedColor);
+            }
+        }
+        imageView.setImage(writableImage);
+    }
+
+    @FXML
+    void onEdgeDetection(ActionEvent event) {
+        double[][] kernel = { { 1, 1, 1 }, { 1, -7, 1 }, { 1, 1, 1 } };
+        final int KERNEL_SIZE = 3;
+        final int OFFSET = 0;
+
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        for (int x = OFFSET; x < width; x++) {
+            for (int y = OFFSET; y < height; y++) {
+                double r = 0;
+                double g = 0;
+                double b = 0;
+
+                    for (int kx = x; kx < kx + KERNEL_SIZE; kx++) {
+                        for (int ky = x; ky < ky + KERNEL_SIZE; ky++) {
+                            Color color = reader.getColor(x + kx - OFFSET, y + ky - OFFSET);
+                            r = color.getRed();
+                            g = color.getGreen();
+                            b = color.getBlue();
+                        }
+                    }
+                imageView.setImage(writableImage);
             }
         }
     }
