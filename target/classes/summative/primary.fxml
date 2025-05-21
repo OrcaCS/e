@@ -76,6 +76,7 @@
                   <MenuItem fx:id="pixelation" mnemonicParsing="false" onAction="#onPixelation" text="Pixelation" />
                   <MenuItem fx:id="vignette" mnemonicParsing="false" onAction="#onVignette" text="Vignette" />
                   <MenuItem fx:id="edgeDetection" mnemonicParsing="false" onAction="#onEdgeDetection" text="Edge Detection" />
+                  <MenuItem fx:id="emboss" mnemonicParsing="false" onAction="#onEmboss" text="Emboss" />
               </items>
             </Menu>
       </menus>
@@ -83,6 +84,8 @@
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
             <ImageView fx:id="imageView" fitHeight="724.0" fitWidth="750.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imageView1" fitHeight="724.0" fitWidth="750.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imageView11" fitHeight="724.0" fitWidth="750.0" layoutX="20.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
       </children>
     </AnchorPane>
   </children>

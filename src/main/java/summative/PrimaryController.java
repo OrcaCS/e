@@ -17,6 +17,11 @@ import java.io.IOException;
 import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
 
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent; // OY HEY OI ORCA. REMOVE THIS IF DRAW FAILS
+import javafx.scene.input.MouseButton;
+
+
 public class PrimaryController {
 
     private Stage stage;
@@ -32,7 +37,46 @@ public class PrimaryController {
     private MenuItem saveImage;
 
     @FXML
+    private MenuItem exit;
+
+    @FXML
     private MenuItem horizontalFlip;
+
+    @FXML
+    private MenuItem verticalFlip;
+
+    @FXML
+    private MenuItem rotation;
+
+    @FXML
+    private MenuItem grayScale;
+
+    @FXML
+    private MenuItem sepiaTone;
+
+    @FXML
+    private MenuItem invertColor;
+
+    @FXML
+    private MenuItem brightness;
+
+    @FXML
+    private MenuItem bulge;
+
+    @FXML
+    private MenuItem colorOverlay;
+
+    @FXML
+    private MenuItem pixelation;
+
+    @FXML
+    private MenuItem vignette;
+
+    @FXML
+    private MenuItem edgeDetection;
+
+    @FXML
+    private MenuItem emboss;
 
     @FXML
     void onOpenImage(ActionEvent event) {
@@ -375,18 +419,64 @@ public class PrimaryController {
 
         for (int x = OFFSET; x < width; x++) {
             for (int y = OFFSET; y < height; y++) {
-                double r = 0;
-                double g = 0;
-                double b = 0;
+                double red = 0;
+                double green = 0;
+                double blue = 0;
 
-                    for (int kx = x; kx < kx + KERNEL_SIZE; kx++) {
-                        for (int ky = x; ky < ky + KERNEL_SIZE; ky++) {
-                            Color color = reader.getColor(x + kx - OFFSET, y + ky - OFFSET);
-                            r = color.getRed();
-                            g = color.getGreen();
-                            b = color.getBlue();
-                        }
+                for (int kx = 0; kx < KERNEL_SIZE && x + kx < width; kx++) {
+                    for (int ky = 0; ky < KERNEL_SIZE && y + ky < height; ky++) {
+                        Color color = reader.getColor(x + kx - OFFSET, y + ky - OFFSET);
+                        red += color.getRed() * kernel[kx][ky];
+                        green += color.getGreen() * kernel[kx][ky];
+                        blue += color.getBlue() * kernel[kx][ky];
                     }
+                }
+
+                red = Math.max(0, Math.min(red, 1));
+                green = Math.max(0, Math.min(green, 1));
+                blue = Math.max(0, Math.min(blue, 1));
+                Color newColor = Color.color(red, green, blue);
+
+                writer.setColor(x, y, newColor);
+                imageView.setImage(writableImage);
+            }
+        }
+    }
+
+    @FXML
+    void onEmboss(ActionEvent event) {
+        double[][] kernel = { { -2, -1, 0 }, { -1, 1, 1 }, { 0, 1, 2 } };
+        final int KERNEL_SIZE = 3;
+        final int OFFSET = 0;
+
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        for (int x = OFFSET; x < width; x++) {
+            for (int y = OFFSET; y < height; y++) {
+                double red = 0;
+                double green = 0;
+                double blue = 0;
+
+                for (int kx = 0; kx < KERNEL_SIZE && x + kx < width; kx++) {
+                    for (int ky = 0; ky < KERNEL_SIZE && y + ky < height; ky++) {
+                        Color color = reader.getColor(x + kx - OFFSET, y + ky - OFFSET);
+                        red += color.getRed() * kernel[kx][ky];
+                        green += color.getGreen() * kernel[kx][ky];
+                        blue += color.getBlue() * kernel[kx][ky];
+                    }
+                }
+
+                red = Math.max(0, Math.min(red, 1));
+                green = Math.max(0, Math.min(green, 1));
+                blue = Math.max(0, Math.min(blue, 1));
+                Color newColor = Color.color(red, green, blue);
+
+                writer.setColor(x, y, newColor);
                 imageView.setImage(writableImage);
             }
         }
@@ -408,20 +498,31 @@ public class PrimaryController {
      * color.getOpacity());
      */
 
-    // @FXML
-    // void onDraw(ActionEvent event) {
-    // int width = (int) imageView.getImage().getWidth();
-    // int height = (int) imageView.getImage().getHeight();
+    @FXML
+    void onDraw(ActionEvent event) {
+        final int RADIUS = 5;
 
-    // WritableImage writableImage = new WritableImage(width, height);
-    // PixelReader reader = imageView.getImage().getPixelReader();
-    // PixelWriter writer = writableImage.getPixelWriter();
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
 
-    // // where cursor pixel (x,y),
-    // // writer.setColor(5 pixels around, reader.getColor (colorhere);
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+        MouseEvent mouse = new MouseEvent(true, 0, 0, 0, 0, PRIMARY, 1, false, false, false, false, true, false, false, false, false, false, false);
 
-    // imageView.setImage(writableImage);
-    // }
+        if (mouse.MOUSE_PRESSED) {
+            mouse.getSceneX();
+            mouse.getSceneY();
+
+            for (int x = 0 - RADIUS; x < RADIUS; x++) {
+                for (int y = 0 - RADIUS; y < RADIUS; y++) {
+                    Color color = Color.BLUEVIOLET;
+                    writer.setColor(x, y, color);
+                }
+            }
+            imageView.setImage(writableImage);
+        }
+    }
 
     // DO NOT REMOVE THIS METHOD!
     public void setStage(Stage stage) {
