@@ -69,7 +69,7 @@
                   <MenuItem fx:id="invertColor" mnemonicParsing="false" onAction="#onInvertColor" text="Invert Color" />
                   <MenuItem fx:id="brightness" mnemonicParsing="false" onAction="#onBrightness" text="Brightness">
                      <graphic>
-                        <Slider fx:id="brightnessSlider" blockIncrement="0.1" majorTickUnit="1.0" max="1.0" min="-1.0" minorTickCount="0" onDragDone="#onBrightnessSlider" onDragDropped="#onBrightnessSlider" onDragEntered="#onBrightnessSlider" onDragExited="#onBrightnessSlider" onDragOver="#onBrightnessSlider" onMouseClicked="#onBrightnessSlider" onMouseDragReleased="#onBrightnessSlider" showTickMarks="true" />
+                        <Slider fx:id="brightnessSlider" blockIncrement="0.1" majorTickUnit="1.0" max="1.0" min="-1.0" minorTickCount="0" onMouseClicked="#onBrightnessSlider" onMouseDragged="#onBrightnessSlider" showTickMarks="true" />
                      </graphic></MenuItem>
               </items>
             </Menu>
