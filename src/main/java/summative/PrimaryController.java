@@ -9,13 +9,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
-
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
 import javafx.scene.control.Slider;
@@ -24,15 +23,12 @@ import javafx.scene.control.Slider;
 // import javafx.scene.input.MouseEvent; // OY HEY OI ORCA. REMOVE THIS IF DRAW FAILS
 // import javafx.scene.input.MouseButton;
 
-import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-
 public class PrimaryController {
 
     private Stage stage;
     private Image originalImage; // Use this to keep track of the original image
+
+    private double brightnessValue; // Get the value from the slider
 
     @FXML
     private ImageView imageView; // OY HEY OI ORCA. NOTE TO SELF ADD THESE FOR NEW METHODS
@@ -64,11 +60,14 @@ public class PrimaryController {
     @FXML
     private MenuItem invertColor;
 
-    @FXML
-    private MenuItem brightness;
+    // @FXML
+    // private MenuItem brightness;
 
     @FXML
     private Slider brightnessSlider;
+
+    @FXML
+    private MenuItem onBrightnessSlider;
 
     @FXML
     private MenuItem bulge;
@@ -283,11 +282,41 @@ public class PrimaryController {
         imageView.setImage(writableImage);
     }
 
+    // @FXML
+    // void onBrightness(ActionEvent event) {
+    //     int width = (int) imageView.getImage().getWidth();
+    //     int height = (int) imageView.getImage().getHeight();
+    //     double brightness = 0.2; // brightness addition between 0 and 1
+
+    //     WritableImage writableImage = new WritableImage(width, height);
+    //     PixelReader reader = imageView.getImage().getPixelReader();
+    //     PixelWriter writer = writableImage.getPixelWriter();
+
+    //     for (int x = 0; x < width; x++) {
+    //         for (int y = 0; y < height; y++) {
+    //             Color color = reader.getColor(x, y);
+    //             double red = color.getRed();
+    //             double green = color.getGreen();
+    //             double blue = color.getBlue();
+
+    //             Color newColor = new Color(Math.min(red + brightness, 1.0), Math.min(green + brightness, 1.0),
+    //                     Math.min(blue + brightness, 1.0),
+    //                     color.getOpacity());
+    //             writer.setColor(x, y, newColor);
+    //         }
+    //     }
+    //     imageView.setImage(writableImage);
+    // }
+
     @FXML
-    void onBrightness(ActionEvent event) {
+    private void handleSliderChange(MouseEvent event) {
+        brightnessValue = brightnessSlider.getValue();
+    }
+
+    @FXML
+    void onBrightnessSlider(ActionEvent event) {
         int width = (int) imageView.getImage().getWidth();
         int height = (int) imageView.getImage().getHeight();
-        double brightness = 0.2; // brightness addition between 0 and 1
 
         WritableImage writableImage = new WritableImage(width, height);
         PixelReader reader = imageView.getImage().getPixelReader();
@@ -300,46 +329,14 @@ public class PrimaryController {
                 double green = color.getGreen();
                 double blue = color.getBlue();
 
-                Color newColor = new Color(Math.min(red + brightness, 1.0), Math.min(green + brightness, 1.0),
-                        Math.min(blue + brightness, 1.0),
+                Color newColor = new Color(Math.max(0, Math.min(red + brightnessValue, 1.0)),
+                        Math.max(0, Math.min(green + brightnessValue, 1.0)),
+                        Math.max(0, Math.min(blue + brightnessValue, 1.0)),
                         color.getOpacity());
                 writer.setColor(x, y, newColor);
             }
         }
         imageView.setImage(writableImage);
-    }
-
-    @FXML
-    void onBrightnessSlider(ActionEvent event) {
-        int width = (int) imageView.getImage().getWidth();
-        int height = (int) imageView.getImage().getHeight();
-
-        WritableImage writableImage = new WritableImage(width, height);
-        PixelReader reader = imageView.getImage().getPixelReader();
-        PixelWriter writer = writableImage.getPixelWriter();
-
-        brightnessSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
-                final double brightnessValue = newValue.doubleValue();
-
-                for (int x = 0; x < width; x++) {
-                    for (int y = 0; y < height; y++) {
-                        Color color = reader.getColor(x, y);
-                        double red = color.getRed();
-                        double green = color.getGreen();
-                        double blue = color.getBlue();
-
-                        Color newColor = new Color(Math.max(0, Math.min(red + brightnessValue, 1.0)),
-                                Math.max(0, Math.min(green + brightnessValue, 1.0)),
-                                Math.max(0, Math.min(blue + brightnessValue, 1.0)),
-                                color.getOpacity());
-                        writer.setColor(x, y, newColor);
-                    }
-                }
-                imageView.setImage(writableImage);
-            }
-        });
-
     }
 
     @FXML
@@ -567,6 +564,23 @@ public class PrimaryController {
     // }
     // imageView.setImage(writableImage);
     // }
+    // }
+
+    // @FXML
+    // void onMouseBulge(ActionEvent event) {
+    // on mouse click
+    // grab location
+    // set a radius using slider
+    // slap in bulge code but mini (for each pixel in radius/circle)
+    // }
+
+    // @FXML
+    // void onSpotRemove(ActionEvent event) {
+    // on mouse right click
+    // grab location and radius of thing to duplicate
+    // set a radius using slider
+    // on left click, in a radius, print out the right click spot
+    // for bonus, make it airbrush??
     // }
 
     // DO NOT REMOVE THIS METHOD!

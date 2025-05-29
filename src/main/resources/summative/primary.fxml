@@ -67,9 +67,9 @@
                 <MenuItem fx:id="grayScale" mnemonicParsing="false" onAction="#onGrayScale" text="Gray Scale" />
                   <MenuItem fx:id="sepiaTone" mnemonicParsing="false" onAction="#onSepiaTone" text="Sepia Tone" />
                   <MenuItem fx:id="invertColor" mnemonicParsing="false" onAction="#onInvertColor" text="Invert Color" />
-                  <MenuItem fx:id="brightness" mnemonicParsing="false" onAction="#onBrightness" text="Brightness">
+                  <MenuItem fx:id="brightness" mnemonicParsing="false" onAction="#onBrightnessSlider" text="Brightness">
                      <graphic>
-                        <Slider fx:id="brightnessSlider" blockIncrement="0.1" majorTickUnit="1.0" max="1.0" min="-1.0" minorTickCount="0" onMouseClicked="#onBrightnessSlider" onMouseDragged="#onBrightnessSlider" showTickMarks="true" />
+                        <Slider fx:id="brightnessSlider" blockIncrement="0.1" majorTickUnit="1.0" max="1.0" min="-1.0" minorTickCount="0" onMouseReleased="#handleSliderChange" showTickMarks="true" />
                      </graphic></MenuItem>
               </items>
             </Menu>
