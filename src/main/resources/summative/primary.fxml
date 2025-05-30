@@ -40,6 +40,7 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox prefHeight="750.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="summative.PrimaryController">
@@ -76,10 +77,18 @@
             </Menu>
             <Menu mnemonicParsing="false" text="Effect">
               <items>
-                <MenuItem fx:id="bulge" mnemonicParsing="false" onAction="#onBulge" text="Bulge" />
+                <MenuItem fx:id="bulge" mnemonicParsing="false" onAction="#onBulge" text="Bulge">
+                     <graphic>
+                        <HBox minHeight="-Infinity" prefHeight="20.0" prefWidth="200.0">
+                           <children>
+                              <Slider fx:id="pSlider" onMouseReleased="#pSliderChange" />
+                              <Slider fx:id="qSlider" onMouseReleased="#qSliderChange" />
+                           </children>
+                        </HBox>
+                     </graphic></MenuItem>
                   <MenuItem fx:id="colorOverlay" mnemonicParsing="false" onAction="#onColorOverlay" text="Color Overlay">
                      <graphic>
-                        <ColorPicker fx:id="colorPicker" editable="true" onAction="#onColorPicker" promptText="Please don't click Custom Color" />
+                        <ColorPicker fx:id="colorPicker" editable="true" onAction="#onColorPicker" />
                      </graphic></MenuItem>
                   <MenuItem fx:id="pixelation" mnemonicParsing="false" onAction="#onPixelation" text="Pixelation" />
                   <MenuItem fx:id="vignette" mnemonicParsing="false" onAction="#onVignette" text="Vignette" />

@@ -96,25 +96,6 @@ public class PrimaryController {
     private MenuItem emboss;
 
     @FXML
-    private void initialize() {
-        // Define some custom colors to add to the ColorPicker
-        ObservableList<Color> customColors = colorPicker.getCustomColors();
-        customColors.addAll(
-                Color.RED, // Red
-                Color.GREEN, // Green
-                Color.BLUE, // Blue
-                Color.YELLOW, // Yellow
-                Color.PURPLE, // Purple
-                Color.CYAN, // Cyan
-                Color.ORANGE, // Orange
-                Color.DEEPSKYBLUE // BDeepSkylue
-        );
-
-        // Set the default color (optional)
-        colorPicker.setValue(Color.BLACK); // Sets the default color to black
-    }
-
-    @FXML
     void onOpenImage(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Image File");
@@ -401,25 +382,26 @@ public class PrimaryController {
         imageView.setImage(writableImage);
     }
 
-    // @FXML
-    // void onColorOverlay(ActionEvent event) {
-    // int width = (int) imageView.getImage().getWidth();
-    // int height = (int) imageView.getImage().getHeight();
+    @FXML
+    private void pSliderChange(MouseEvent event) {
+        pValue = pSlider.getValue();
+    }
 
-    // WritableImage writableImage = new WritableImage(width, height);
-    // PixelReader reader = imageView.getImage().getPixelReader();
-    // PixelWriter writer = writableImage.getPixelWriter();
-
-    // for (int x = 0; x < width; x++) {
-    // for (int y = 0; y < height; y++) {
-    // Color color = reader.getColor(x, y);
-    // Color overlay = Color.BLUEVIOLET; // choose color
-
-    // writer.setColor(x, y, color.interpolate(overlay, 0.5));
-    // }
-    // }
-    // imageView.setImage(writableImage);
-    // }
+    @FXML
+    private void initialize() {
+        // custom colors here
+        ObservableList<Color> customColors = colorPicker.getCustomColors();
+        customColors.addAll(
+                Color.RED, // Red
+                Color.GREEN, // Green
+                Color.BLUE, // Blue
+                Color.YELLOW, // Yellow
+                Color.PURPLE, // Purple
+                Color.CYAN, // Cyan
+                Color.ORANGE, // Orange
+                Color.DEEPSKYBLUE // DeepSkyBlue
+        );
+    }
 
     @FXML
     void onColorOverlay(ActionEvent event) {
