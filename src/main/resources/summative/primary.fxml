@@ -32,6 +32,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -76,7 +77,10 @@
             <Menu mnemonicParsing="false" text="Effect">
               <items>
                 <MenuItem fx:id="bulge" mnemonicParsing="false" onAction="#onBulge" text="Bulge" />
-                  <MenuItem fx:id="colorOverlay" mnemonicParsing="false" onAction="#onColorOverlay" text="Color Overlay" />
+                  <MenuItem fx:id="colorOverlay" mnemonicParsing="false" onAction="#onColorOverlay" text="Color Overlay">
+                     <graphic>
+                        <ColorPicker fx:id="colorPicker" editable="true" onAction="#onColorPicker" />
+                     </graphic></MenuItem>
                   <MenuItem fx:id="pixelation" mnemonicParsing="false" onAction="#onPixelation" text="Pixelation" />
                   <MenuItem fx:id="vignette" mnemonicParsing="false" onAction="#onVignette" text="Vignette" />
                   <MenuItem fx:id="edgeDetection" mnemonicParsing="false" onAction="#onEdgeDetection" text="Edge Detection" />
