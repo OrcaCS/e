@@ -79,7 +79,7 @@
                 <MenuItem fx:id="bulge" mnemonicParsing="false" onAction="#onBulge" text="Bulge" />
                   <MenuItem fx:id="colorOverlay" mnemonicParsing="false" onAction="#onColorOverlay" text="Color Overlay">
                      <graphic>
-                        <ColorPicker fx:id="colorPicker" editable="true" onAction="#onColorPicker" />
+                        <ColorPicker fx:id="colorPicker" editable="true" onAction="#onColorPicker" promptText="Please don't click Custom Color" />
                      </graphic></MenuItem>
                   <MenuItem fx:id="pixelation" mnemonicParsing="false" onAction="#onPixelation" text="Pixelation" />
                   <MenuItem fx:id="vignette" mnemonicParsing="false" onAction="#onVignette" text="Vignette" />

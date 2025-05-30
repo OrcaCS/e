@@ -15,20 +15,25 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
+
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
 import javafx.scene.control.Slider;
 
-// import javafx.scene.input.MouseDragEvent;
-// import javafx.scene.input.MouseEvent; // OY HEY OI ORCA. REMOVE THIS IF DRAW FAILS
-// import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent; // OY HEY OI ORCA. REMOVE THIS IF DRAW FAILS
+import javafx.scene.input.MouseButton;
+
+import javafx.scene.control.ColorPicker;
 
 public class PrimaryController {
 
     private Stage stage;
     private Image originalImage; // Use this to keep track of the original image
 
-    private double brightnessValue; // Get the value from the slider
+    private double brightnessValue;
+    private Color colorPicked;
 
     @FXML
     private ImageView imageView; // OY HEY OI ORCA. NOTE TO SELF ADD THESE FOR NEW METHODS
@@ -76,6 +81,9 @@ public class PrimaryController {
     private MenuItem colorOverlay;
 
     @FXML
+    private ColorPicker colorPicker;
+
+    @FXML
     private MenuItem pixelation;
 
     @FXML
@@ -86,6 +94,25 @@ public class PrimaryController {
 
     @FXML
     private MenuItem emboss;
+
+    @FXML
+    private void initialize() {
+        // Define some custom colors to add to the ColorPicker
+        ObservableList<Color> customColors = colorPicker.getCustomColors();
+        customColors.addAll(
+                Color.RED, // Red
+                Color.GREEN, // Green
+                Color.BLUE, // Blue
+                Color.YELLOW, // Yellow
+                Color.PURPLE, // Purple
+                Color.CYAN, // Cyan
+                Color.ORANGE, // Orange
+                Color.DEEPSKYBLUE // BDeepSkylue
+        );
+
+        // Set the default color (optional)
+        colorPicker.setValue(Color.BLACK); // Sets the default color to black
+    }
 
     @FXML
     void onOpenImage(ActionEvent event) {
@@ -284,28 +311,29 @@ public class PrimaryController {
 
     // @FXML
     // void onBrightness(ActionEvent event) {
-    //     int width = (int) imageView.getImage().getWidth();
-    //     int height = (int) imageView.getImage().getHeight();
-    //     double brightness = 0.2; // brightness addition between 0 and 1
+    // int width = (int) imageView.getImage().getWidth();
+    // int height = (int) imageView.getImage().getHeight();
+    // double brightness = 0.2; // brightness addition between 0 and 1
 
-    //     WritableImage writableImage = new WritableImage(width, height);
-    //     PixelReader reader = imageView.getImage().getPixelReader();
-    //     PixelWriter writer = writableImage.getPixelWriter();
+    // WritableImage writableImage = new WritableImage(width, height);
+    // PixelReader reader = imageView.getImage().getPixelReader();
+    // PixelWriter writer = writableImage.getPixelWriter();
 
-    //     for (int x = 0; x < width; x++) {
-    //         for (int y = 0; y < height; y++) {
-    //             Color color = reader.getColor(x, y);
-    //             double red = color.getRed();
-    //             double green = color.getGreen();
-    //             double blue = color.getBlue();
+    // for (int x = 0; x < width; x++) {
+    // for (int y = 0; y < height; y++) {
+    // Color color = reader.getColor(x, y);
+    // double red = color.getRed();
+    // double green = color.getGreen();
+    // double blue = color.getBlue();
 
-    //             Color newColor = new Color(Math.min(red + brightness, 1.0), Math.min(green + brightness, 1.0),
-    //                     Math.min(blue + brightness, 1.0),
-    //                     color.getOpacity());
-    //             writer.setColor(x, y, newColor);
-    //         }
-    //     }
-    //     imageView.setImage(writableImage);
+    // Color newColor = new Color(Math.min(red + brightness, 1.0), Math.min(green +
+    // brightness, 1.0),
+    // Math.min(blue + brightness, 1.0),
+    // color.getOpacity());
+    // writer.setColor(x, y, newColor);
+    // }
+    // }
+    // imageView.setImage(writableImage);
     // }
 
     @FXML
@@ -373,6 +401,26 @@ public class PrimaryController {
         imageView.setImage(writableImage);
     }
 
+    // @FXML
+    // void onColorOverlay(ActionEvent event) {
+    // int width = (int) imageView.getImage().getWidth();
+    // int height = (int) imageView.getImage().getHeight();
+
+    // WritableImage writableImage = new WritableImage(width, height);
+    // PixelReader reader = imageView.getImage().getPixelReader();
+    // PixelWriter writer = writableImage.getPixelWriter();
+
+    // for (int x = 0; x < width; x++) {
+    // for (int y = 0; y < height; y++) {
+    // Color color = reader.getColor(x, y);
+    // Color overlay = Color.BLUEVIOLET; // choose color
+
+    // writer.setColor(x, y, color.interpolate(overlay, 0.5));
+    // }
+    // }
+    // imageView.setImage(writableImage);
+    // }
+
     @FXML
     void onColorOverlay(ActionEvent event) {
         int width = (int) imageView.getImage().getWidth();
@@ -385,12 +433,16 @@ public class PrimaryController {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Color color = reader.getColor(x, y);
-                Color overlay = Color.BLUEVIOLET;
 
-                writer.setColor(x, y, color.interpolate(overlay, 0.5));
+                writer.setColor(x, y, color.interpolate(colorPicked, 0.5));
             }
         }
         imageView.setImage(writableImage);
+    }
+
+    @FXML
+    void onColorPicker(ActionEvent event) {
+        colorPicked = colorPicker.getValue();
     }
 
     @FXML
