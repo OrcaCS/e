@@ -576,14 +576,14 @@ public class PrimaryController {
     // void onDraw(ActionEvent event) {
     // final int RADIUS = 5;
 
-    // int width = (int) imageView.getImage().getWidth();
+    // int width = (int) imageView.getImage().getWidth(); // MAYBE FIX CONVERSION INT??
     // int height = (int) imageView.getImage().getHeight();
 
     // WritableImage writableImage = new WritableImage(width, height);
     // PixelReader reader = imageView.getImage().getPixelReader();
     // PixelWriter writer = writableImage.getPixelWriter();
     // MouseEvent mouse = new MouseEvent(true, 0, 0, 0, 0, PRIMARY, 1, false, false,
-    // false, false, true, false, false, false, false, false, false);
+    // false, false, true, false, false, false, false, false, false); // REMOVE. DO onCLICK IN SCENEBUILDER
     // // ^^ left click
     // if (mouse.MOUSE_PRESSED) { // when mouse is clciked (button down) && maybe
     // right click to stop??
@@ -599,6 +599,36 @@ public class PrimaryController {
     // imageView.setImage(writableImage);
     // }
     // }
+
+    
+    // @FXML
+    // public void initialize() {
+    //     imageView.setOnMouseClicked(this::handleMouseClick);
+    // }
+
+//     private void handleMouseClick(MouseEvent event) {
+//     if (event.getButton() == MouseButton.PRIMARY) {
+//         // Left click
+//         System.out.println("Left click detected");
+//     } else if (event.getButton() == MouseButton.SECONDARY) {
+//         // Right click
+//         System.out.println("Right click detected");
+//     }
+
+    // int centerX = (int) event.getX();
+    //     int centerY = (int) event.getY();
+
+    //     for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) {
+    //         for (int y = centerY - RADIUS; y <= centerY + RADIUS; y++) {
+    //             if (x >= 0 && x < width && y >= 0 && y < height) {
+    //                 double dx = x - centerX;
+    //                 double dy = y - centerY;
+    //                 if (dx * dx + dy * dy <= RADIUS * RADIUS) {
+    //                     writer.setColor(x, y, Color.BLUEVIOLET);
+    //                 }
+    //             }
+    //         }
+    
 
     // @FXML
     // void onMouseBulge(ActionEvent event) {
