@@ -81,8 +81,8 @@
                      <graphic>
                         <HBox minHeight="-Infinity" prefHeight="20.0" prefWidth="200.0">
                            <children>
-                              <Slider fx:id="pSlider" onMouseReleased="#pSliderChange" />
-                              <Slider fx:id="qSlider" onMouseReleased="#qSliderChange" />
+                              <Slider fx:id="pSlider" blockIncrement="0.2" max="3.0" onMouseReleased="#pSliderChange" value="1.6" />
+                              <Slider fx:id="sSlider" max="50.0" onMouseReleased="#sSliderChange" value="20.0" />
                            </children>
                         </HBox>
                      </graphic></MenuItem>
@@ -90,7 +90,10 @@
                      <graphic>
                         <ColorPicker fx:id="colorPicker" editable="true" onAction="#onColorPicker" />
                      </graphic></MenuItem>
-                  <MenuItem fx:id="pixelation" mnemonicParsing="false" onAction="#onPixelation" text="Pixelation" />
+                  <MenuItem fx:id="pixelation" mnemonicParsing="false" onAction="#onPixelation" text="Pixelation">
+                     <graphic>
+                        <Slider fx:id="blockSizeSlider" blockIncrement="1.0" onMouseReleased="#onBlockSizeSlider" value="10.0" />
+                     </graphic></MenuItem>
                   <MenuItem fx:id="vignette" mnemonicParsing="false" onAction="#onVignette" text="Vignette" />
                   <MenuItem fx:id="edgeDetection" mnemonicParsing="false" onAction="#onEdgeDetection" text="Edge Detection" />
                   <MenuItem fx:id="emboss" mnemonicParsing="false" onAction="#onEmboss" text="Emboss" />
