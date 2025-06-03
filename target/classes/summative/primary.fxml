@@ -62,6 +62,7 @@
                 <MenuItem fx:id="horizontalFlip" mnemonicParsing="false" onAction="#onHorizontalFlip" text="Horizontal Flip" />
                   <MenuItem fx:id="verticalFlip" mnemonicParsing="false" onAction="#onVerticalFlip" text="Vertical Flip" />
                   <MenuItem fx:id="rotation" mnemonicParsing="false" onAction="#onRotation" text="Rotation" />
+                  <MenuItem fx:id="swirl" mnemonicParsing="false" onAction="#onSwirl" text="Swirl" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Color">

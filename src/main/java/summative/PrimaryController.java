@@ -235,6 +235,48 @@ public class PrimaryController {
     }
 
     @FXML
+    void onSwirl(ActionEvent event) {
+        int swirls = 1;
+        int radius = 2;
+
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+        double cx = width / 2;
+        double cy = height / 2;
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+
+                double dx = x - cx; // distance from center
+                double dy = y - cy;
+                double r = Math.sqrt(dx * dx + dy * dy); // together distance
+                double theta = Math.atan2(dy, dx); // arc tan angle
+
+                double swirliness = 1.0 - (r / radius); // strongest swirl at center, less further away
+                if (swirliness > 0) { // if not cetner
+                    double twistAngle = swirliness * swirls * Math.PI * 2; // added rotation pizxe=l
+
+                    theta += twistAngle;
+
+                    int newX = (int) (Math.cos(theta) * r);
+                    int newY = (int) (Math.sin(theta) * r);
+
+                    if (newX >= 0 && newX < width) {
+                        if (newY >= 0 && newY < height) {
+                            writer.setColor(x, y, reader.getColor(newX, newY));
+                        }
+                    }
+                }
+            }
+        }
+        imageView.setImage(writableImage);
+    }
+
+    @FXML
     void onGrayScale(ActionEvent event) {
         int width = (int) imageView.getImage().getWidth();
         int height = (int) imageView.getImage().getHeight();
@@ -371,36 +413,36 @@ public class PrimaryController {
 
     // @FXML
     // void onBulge(ActionEvent event) {
-    //     int width = (int) imageView.getImage().getWidth();
-    //     int height = (int) imageView.getImage().getHeight();
-    //     double cx = width / 2;
-    //     double cy = height / 2;
+    // int width = (int) imageView.getImage().getWidth();
+    // int height = (int) imageView.getImage().getHeight();
+    // double cx = width / 2;
+    // double cy = height / 2;
 
-    //     WritableImage writableImage = new WritableImage(width, height);
-    //     PixelReader reader = imageView.getImage().getPixelReader();
-    //     PixelWriter writer = writableImage.getPixelWriter();
+    // WritableImage writableImage = new WritableImage(width, height);
+    // PixelReader reader = imageView.getImage().getPixelReader();
+    // PixelWriter writer = writableImage.getPixelWriter();
 
-    //     for (int x = 0; x < width; x++) {
-    //         for (int y = 0; y < height; y++) {
-    //             double p = 1.6;
-    //             double s = 20;
+    // for (int x = 0; x < width; x++) {
+    // for (int y = 0; y < height; y++) {
+    // double p = 1.6;
+    // double s = 20;
 
-    //             double dx = x - cx;
-    //             double dy = y - cy;
-    //             double r = Math.sqrt(dx * dx + dy * dy);
-    //             double theta = Math.atan2(dy, dx);
-    //             double rPrime = Math.pow(r, p) / s;
-    //             int xPrime = (int) (cx + rPrime * Math.cos(theta));
-    //             int yPrime = (int) (cy + rPrime * Math.sin(theta));
+    // double dx = x - cx;
+    // double dy = y - cy;
+    // double r = Math.sqrt(dx * dx + dy * dy);
+    // double theta = Math.atan2(dy, dx);
+    // double rPrime = Math.pow(r, p) / s;
+    // int xPrime = (int) (cx + rPrime * Math.cos(theta));
+    // int yPrime = (int) (cy + rPrime * Math.sin(theta));
 
-    //             if (xPrime >= 0 && xPrime < width) {
-    //                 if (yPrime >= 0 && yPrime < height) {
-    //                     writer.setColor(x, y, reader.getColor(xPrime, yPrime));
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     imageView.setImage(writableImage);
+    // if (xPrime >= 0 && xPrime < width) {
+    // if (yPrime >= 0 && yPrime < height) {
+    // writer.setColor(x, y, reader.getColor(xPrime, yPrime));
+    // }
+    // }
+    // }
+    // }
+    // imageView.setImage(writableImage);
     // }
 
     @FXML
@@ -634,38 +676,39 @@ public class PrimaryController {
      * color.getOpacity());
      */
 
-//     @FXML
-//     void onDraw(ActionEvent event) {
+    // @FXML
+    // void onDraw(ActionEvent event) {
 
-//     private void initialize() {
-//         imageView.setOnMouseClicked(this::handleMouseClick);
-//     }
+    // private void initialize() {
+    // imageView.setOnMouseClicked(this::handleMouseClick);
+    // }
 
-//     private void handleMouseClick(MouseEvent event) {
-//         int centerX;
-//         int centerY;
+    // private void handleMouseClick(MouseEvent event) {
+    // int centerX;
+    // int centerY;
 
-//         int RADIUS = 5;
+    // int RADIUS = 5;
 
-//         int width = (int) imageView.getImage().getWidth(); // MAYBE FIX CONVERSION INT??
-//         int height = (int) imageView.getImage().getHeight();
+    // int width = (int) imageView.getImage().getWidth(); // MAYBE FIX CONVERSION
+    // INT??
+    // int height = (int) imageView.getImage().getHeight();
 
-//         WritableImage writableImage = new WritableImage(width, height);
-//         PixelReader reader = imageView.getImage().getPixelReader();
-//         PixelWriter writer = writableImage.getPixelWriter();
+    // WritableImage writableImage = new WritableImage(width, height);
+    // PixelReader reader = imageView.getImage().getPixelReader();
+    // PixelWriter writer = writableImage.getPixelWriter();
 
-//         if (event.getButton() == MouseButton.PRIMARY) {
-//             for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) {
-//                 for (int y = centerY - RADIUS; y <= centerY + RADIUS; y++) {
-//                     if (x >= 0 && x < width && y >= 0 && y < height) {
-//                         double dx = x - centerX;
-//                         double dy = y - centerY;
-//                         writer.setColor(x, y, Color.BLUEVIOLET);
-//                     }
-//                 }
-//             }
-//     }
-// }
+    // if (event.getButton() == MouseButton.PRIMARY) {
+    // for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) {
+    // for (int y = centerY - RADIUS; y <= centerY + RADIUS; y++) {
+    // if (x >= 0 && x < width && y >= 0 && y < height) {
+    // double dx = x - centerX;
+    // double dy = y - centerY;
+    // writer.setColor(x, y, Color.BLUEVIOLET);
+    // }
+    // }
+    // }
+    // }
+    // }
 
     // @FXML
     // void onMouseBulge(ActionEvent event) {
@@ -684,38 +727,40 @@ public class PrimaryController {
     // for bonus, make it airbrush??
 
     // private void initialize() {
-    //     imageView.setOnMouseClicked(this::handleMouseClick);
+    // imageView.setOnMouseClicked(this::handleMouseClick);
     // }
 
     // private void handleMouseClick(MouseEvent event) {
-    //     int centerX;
-    //     int centerY;
+    // int centerX;
+    // int centerY;
 
-    //     int RADIUS = 5;
+    // int RADIUS = 5;
 
-    //     int width = (int) imageView.getImage().getWidth(); // MAYBE FIX CONVERSION INT??
-    //     int height = (int) imageView.getImage().getHeight();
+    // int width = (int) imageView.getImage().getWidth(); // MAYBE FIX CONVERSION
+    // INT??
+    // int height = (int) imageView.getImage().getHeight();
 
-    //     WritableImage writableImage = new WritableImage(width, height);
-    //     PixelReader reader = imageView.getImage().getPixelReader();
-    //     PixelWriter writer = writableImage.getPixelWriter();
+    // WritableImage writableImage = new WritableImage(width, height);
+    // PixelReader reader = imageView.getImage().getPixelReader();
+    // PixelWriter writer = writableImage.getPixelWriter();
 
-    //     if (event.getButton() == MouseButton.PRIMARY) {
-    //         for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) {
-    //             for (int y = centerY - RADIUS; y <= centerY + RADIUS; y++) {
-    //                 if (x >= 0 && x < width && y >= 0 && y < height) {
-    //                     double dx = x - centerX;
-    //                     double dy = y - centerY;
-    //                     if (dx * dx + dy * dy <= RADIUS * RADIUS) {
-    //                         writer.setColor(x, y, Color.BLUEVIOLET); // YOU ARE DOING FIX. MAKE IT COPY THE CIRCLE AREA.
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     } else if (event.getButton() == MouseButton.SECONDARY) {
-    //         centerX = (int) event.getX();
-    //         centerY = (int) event.getY();
-    //     }
+    // if (event.getButton() == MouseButton.PRIMARY) {
+    // for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) {
+    // for (int y = centerY - RADIUS; y <= centerY + RADIUS; y++) {
+    // if (x >= 0 && x < width && y >= 0 && y < height) {
+    // double dx = x - centerX;
+    // double dy = y - centerY;
+    // if (dx * dx + dy * dy <= RADIUS * RADIUS) {
+    // writer.setColor(x, y, Color.BLUEVIOLET); // YOU ARE DOING FIX. MAKE IT COPY
+    // THE CIRCLE AREA.
+    // }
+    // }
+    // }
+    // }
+    // } else if (event.getButton() == MouseButton.SECONDARY) {
+    // centerX = (int) event.getX();
+    // centerY = (int) event.getY();
+    // }
     // }
     // }
 
