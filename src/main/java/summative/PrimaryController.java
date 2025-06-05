@@ -238,7 +238,7 @@ public class PrimaryController {
     @FXML
     void onSwirl(ActionEvent event) {
         int swirls = 1;
-        int radius = 2;
+        int radius = Math.min(width, height) / 2; // radius as big as possible within the image
 
         int width = (int) imageView.getImage().getWidth();
         int height = (int) imageView.getImage().getHeight();
@@ -263,14 +263,16 @@ public class PrimaryController {
 
                     theta += twistAngle;
 
-                    int newX = (int) (Math.cos(theta) * r);
-                    int newY = (int) (Math.sin(theta) * r);
+                    int newX = (int) (Math.cos(theta) * r + cx); // uses pixel angle and radius and distance from center to find displacement
+                    int newY = (int) (Math.sin(theta) * r + cy);
 
                     if (newX >= 0 && newX < width) {
                         if (newY >= 0 && newY < height) {
                             writer.setColor(x, y, reader.getColor(newX, newY));
                         }
                     }
+                } else { // if out of swirl, keep og
+                    writer.setColor(x, y, reader.getColor(x, y));
                 }
             }
         }
