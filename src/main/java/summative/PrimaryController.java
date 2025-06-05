@@ -37,6 +37,7 @@ public class PrimaryController {
     private double pValue;
     private double sValue;
     private int blockSize;
+    private int radius;
     private boolean drawOn = false;
 
     @FXML
@@ -58,7 +59,16 @@ public class PrimaryController {
     private MenuItem verticalFlip;
 
     @FXML
+    private MenuItem swirl;
+
+    @FXML
     private MenuItem rotation;
+
+    @FXML
+    private Slider swirlSlider;
+
+    @FXML
+    private MenuItem onSwirlSlider;
 
     @FXML
     private MenuItem grayScale;
@@ -236,9 +246,16 @@ public class PrimaryController {
     }
 
     @FXML
+    private void onSwirlSlider(MouseEvent event) {
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+        int max = Math.max(width, height);
+        radius = Math.max(1, Math.min((int) swirlSlider.getValue(), max));
+    }
+
+    @FXML
     void onSwirl(ActionEvent event) {
         int swirls = 1;
-        int radius = Math.min(width, height) / 2; // radius as big as possible within the image
 
         int width = (int) imageView.getImage().getWidth();
         int height = (int) imageView.getImage().getHeight();
@@ -263,7 +280,8 @@ public class PrimaryController {
 
                     theta += twistAngle;
 
-                    int newX = (int) (Math.cos(theta) * r + cx); // uses pixel angle and radius and distance from center to find displacement
+                    int newX = (int) (Math.cos(theta) * r + cx); // uses pixel angle and radius and distance from center
+                                                                 // to find displacement
                     int newY = (int) (Math.sin(theta) * r + cy);
 
                     if (newX >= 0 && newX < width) {
@@ -490,21 +508,21 @@ public class PrimaryController {
         imageView.setImage(writableImage);
     }
 
-    @FXML
-    private void initialize() {
-        // custom colors here
-        ObservableList<Color> customColors = colorPicker.getCustomColors();
-        customColors.addAll(
-                Color.RED, // Red
-                Color.GREEN, // Green
-                Color.BLUE, // Blue
-                Color.YELLOW, // Yellow
-                Color.PURPLE, // Purple
-                Color.CYAN, // Cyan
-                Color.ORANGE, // Orange
-                Color.DEEPSKYBLUE // DeepSkyBlue
-        );
-    }
+    // @FXML
+    // private void initialize() {
+    //     // custom colors here
+    //     ObservableList<Color> customColors = colorPicker.getCustomColors();
+    //     customColors.addAll(
+    //             Color.RED, // Red
+    //             Color.GREEN, // Green
+    //             Color.BLUE, // Blue
+    //             Color.YELLOW, // Yellow
+    //             Color.PURPLE, // Purple
+    //             Color.CYAN, // Cyan
+    //             Color.ORANGE, // Orange
+    //             Color.DEEPSKYBLUE // DeepSkyBlue
+    //     );
+    // }
 
     @FXML
     void onColorOverlay(ActionEvent event) {
@@ -679,46 +697,47 @@ public class PrimaryController {
      * color.getOpacity());
      */
 
-//     @FXML
-// private void initialize() {
-//     
-// }
+    @FXML
+    private void initialize() {
 
-//     @FXML
-// private void onDraw(ActionEvent event) { // MAYBE ADD A MOUSE CURSOR WITH CIRCLE?
-//     drawOn = true; // SLAP DRAWON ON DRAW MENU
-//     imageView.setOnMousePressed(this::handleMousePressed);
-// }
+    }
 
-//     @FXML
-// private void onDrawStop(ActionEvent event) {
-//     drawingEnabled = false; // CONNECT SOMEHOW?
-//     imageView.setOnMousePressed(null); // stop from detecting mouse clcik
-// }
+    @FXML
+    private void onDraw(ActionEvent event) { // MAYBE ADD A MOUSE CURSOR WITH CIRCLE?
+        drawOn = true;
+        imageView.setOnMousePressed(this::handleMousePressed);
+    }
 
-    // private void handleMousePressed(MouseEvent event) {
-    // int centerX;
-    // int centerY;
+    @FXML
+    private void onDrawStop(ActionEvent event) {
+        drawOn = false; // CONNECT SOMEHOW?
+        imageView.setOnMousePressed(null); // stop from detecting mouse clcik
+    }
 
-    // final int RADIUS = 5;
+    private void handleMousePressed(MouseEvent event) {
+        int centerX = 0;
+        int centerY = 0;
 
-    // int width = (int) imageView.getImage().getWidth();
-    // int height = (int) imageView.getImage().getHeight();
+        final int RADIUS = 5;
 
-    // WritableImage writableImage = new WritableImage(width, height);
-    // PixelReader reader = imageView.getImage().getPixelReader();
-    // PixelWriter writer = writableImage.getPixelWriter();
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
 
-    // if (event.getButton() == MouseButton.PRIMARY) {
-    // for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) { // SQUARE DRAWING
-    // for (int y = centerY - RADIUS; y <= centerY + RADIUS; y++) {
-    // if (x >= 0 && x < width && y >= 0 && y < height) {
-    // writer.setColor(x, y, Color.BLUEVIOLET);
-    // }
-    // }
-    // }
-    // }
-    // }
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        if (event.getButton() == MouseButton.PRIMARY) {
+            for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) { // SQUARE DRAWING
+                for (int y = centerY - RADIUS; y <= centerY + RADIUS; y++) {
+                    if (x >= 0 && x < width && y >= 0 && y < height) {
+                        writer.setColor(x, y, Color.BLUEVIOLET);
+                    }
+                }
+            }
+        }
+        imageView.setImage(writableImage);
+    }
 
     // @FXML
     // void onMouseBulge(ActionEvent event) {
@@ -730,11 +749,12 @@ public class PrimaryController {
 
     // double dx = x - centerX;
     // double dy = y - centerY;
-    // if (Math.sqrt(dx * dx + dy * dy <= RADIUS)) { // if x-circle length^2 + y-circle length^2 is in distance^2 from pythagorean theorem
-                                                    // distance = Math.sqrt(x^2 + y^2)
-        // writer.setColor(x, y, Color.BLUEVIOLET); // FIX COLOR TO BULGE
+    // if (Math.sqrt(dx * dx + dy * dy <= RADIUS)) { // if x-circle length^2 +
+    // y-circle length^2 is in distance^2 from pythagorean theorem
+    // distance = Math.sqrt(x^2 + y^2)
+    // writer.setColor(x, y, Color.BLUEVIOLET); // FIX COLOR TO BULGE
     // }
-    
+
     // }
 
     // @FXML

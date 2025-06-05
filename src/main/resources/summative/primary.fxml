@@ -62,7 +62,10 @@
                 <MenuItem fx:id="horizontalFlip" mnemonicParsing="false" onAction="#onHorizontalFlip" text="Horizontal Flip" />
                   <MenuItem fx:id="verticalFlip" mnemonicParsing="false" onAction="#onVerticalFlip" text="Vertical Flip" />
                   <MenuItem fx:id="rotation" mnemonicParsing="false" onAction="#onRotation" text="Rotation" />
-                  <MenuItem fx:id="swirl" mnemonicParsing="false" onAction="#onSwirl" text="Swirl" />
+                  <MenuItem fx:id="swirl" mnemonicParsing="false" onAction="#onSwirl" text="Swirl">
+                     <graphic>
+                        <Slider fx:id="swirlSlider" max="1000.0" onMouseReleased="#onSwirlSlider" value="50.0" />
+                     </graphic></MenuItem>
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Color">
@@ -98,6 +101,11 @@
                   <MenuItem fx:id="vignette" mnemonicParsing="false" onAction="#onVignette" text="Vignette" />
                   <MenuItem fx:id="edgeDetection" mnemonicParsing="false" onAction="#onEdgeDetection" text="Edge Detection" />
                   <MenuItem fx:id="emboss" mnemonicParsing="false" onAction="#onEmboss" text="Emboss" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Markup">
+              <items>
+                <MenuItem fx:id="draw" mnemonicParsing="false" onAction="#onDraw" text="Draw" />
               </items>
             </Menu>
       </menus>
