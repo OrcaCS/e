@@ -705,6 +705,7 @@ public class PrimaryController {
     @FXML
     private void onDraw(ActionEvent event) { // MAYBE ADD A MOUSE CURSOR WITH CIRCLE?
         drawOn = true;
+        imageView.setCursor(Cursor.CROSSHAIR); // CURSOR IS DIFF SHAPE
         imageView.setOnMousePressed(this::handleMousePressed);
     }
 
@@ -715,8 +716,8 @@ public class PrimaryController {
     }
 
     private void handleMousePressed(MouseEvent event) {
-        int centerX = 0;
-        int centerY = 0;
+        int centerX = (int) event.getX(); // where click happens
+        int centerY = (int) event.getY();
 
         final int RADIUS = 5;
 
@@ -726,6 +727,12 @@ public class PrimaryController {
         WritableImage writableImage = new WritableImage(width, height);
         PixelReader reader = imageView.getImage().getPixelReader();
         PixelWriter writer = writableImage.getPixelWriter();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                writer.setColor(x, y, reader.getColor(x, y)); // copy og image (for reversal reasons)
+            }
+        }
 
         if (event.getButton() == MouseButton.PRIMARY) {
             for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) { // SQUARE DRAWING
