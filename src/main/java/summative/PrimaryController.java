@@ -37,6 +37,7 @@ public class PrimaryController {
     private double pValue;
     private double sValue;
     private int blockSize;
+    private boolean drawOn = false;
 
     @FXML
     private ImageView imageView; // OY HEY OI ORCA. NOTE TO SELF ADD THESE FOR NEW METHODS
@@ -676,21 +677,30 @@ public class PrimaryController {
      * color.getOpacity());
      */
 
-    // @FXML
-    // void onDraw(ActionEvent event) {
+//     @FXML
+// private void initialize() {
+//     
+// }
 
-    // private void initialize() {
-    // imageView.setOnMouseClicked(this::handleMouseClick);
-    // }
+//     @FXML
+// private void onDraw(ActionEvent event) { // MAYBE ADD A MOUSE CURSOR WITH CIRCLE?
+//     drawOn = true; // SLAP DRAWON ON DRAW MENU
+//     imageView.setOnMousePressed(this::handleMousePressed);
+// }
 
-    // private void handleMouseClick(MouseEvent event) {
+//     @FXML
+// private void onDrawStop(ActionEvent event) {
+//     drawingEnabled = false; // CONNECT SOMEHOW?
+//     imageView.setOnMousePressed(null); // stop from detecting mouse clcik
+// }
+
+    // private void handleMousePressed(MouseEvent event) {
     // int centerX;
     // int centerY;
 
-    // int RADIUS = 5;
+    // final int RADIUS = 5;
 
-    // int width = (int) imageView.getImage().getWidth(); // MAYBE FIX CONVERSION
-    // INT??
+    // int width = (int) imageView.getImage().getWidth();
     // int height = (int) imageView.getImage().getHeight();
 
     // WritableImage writableImage = new WritableImage(width, height);
@@ -698,11 +708,9 @@ public class PrimaryController {
     // PixelWriter writer = writableImage.getPixelWriter();
 
     // if (event.getButton() == MouseButton.PRIMARY) {
-    // for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) {
+    // for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) { // SQUARE DRAWING
     // for (int y = centerY - RADIUS; y <= centerY + RADIUS; y++) {
     // if (x >= 0 && x < width && y >= 0 && y < height) {
-    // double dx = x - centerX;
-    // double dy = y - centerY;
     // writer.setColor(x, y, Color.BLUEVIOLET);
     // }
     // }
@@ -716,6 +724,15 @@ public class PrimaryController {
     // grab location
     // set a radius using slider
     // slap in bulge code but mini (for each pixel in radius/circle)
+    // maybe add a mouse cursor with circle
+
+    // double dx = x - centerX;
+    // double dy = y - centerY;
+    // if (Math.sqrt(dx * dx + dy * dy <= RADIUS)) { // if x-circle length^2 + y-circle length^2 is in distance^2 from pythagorean theorem
+                                                    // distance = Math.sqrt(x^2 + y^2)
+        // writer.setColor(x, y, Color.BLUEVIOLET); // FIX COLOR TO BULGE
+    // }
+    
     // }
 
     // @FXML
