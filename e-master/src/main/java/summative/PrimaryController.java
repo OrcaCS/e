@@ -43,6 +43,8 @@ public class PrimaryController {
     private int radius;
     private boolean drawOn = false;
     private Color colorPickedDraw;
+    private boolean bulgeOn = false;
+    private int radiusBulge = 50;
 
     @FXML
     private ImageView imageView; // OY HEY OI ORCA. NOTE TO SELF ADD THESE FOR NEW METHODS
@@ -825,6 +827,115 @@ public class PrimaryController {
     // }
 
     // }
+
+    @FXML
+    private void onMouseBulge(ActionEvent event) {
+        Image image = imageView.getImage();
+
+        if (image == null) { // creates a blank if no writable image
+            image = new WritableImage(750, 750);
+            imageView.setImage(image);
+        }
+
+        bulgeOn = true;
+        imageView.setCursor(Cursor.CROSSHAIR);
+        imageView.getParent().setCursor(Cursor.CROSSHAIR);
+
+        int width = (int) imageView.getImage().getWidth();
+        int height = (int) imageView.getImage().getHeight();
+
+        WritableImage writable = new WritableImage(image.getPixelReader(), width, height);
+        imageView.setImage(writable);
+
+        imageView.getParent().setMouseTransparent(true); // removes annoying parent if in way (anything blocking
+                                                         // imageview)
+        imageView.setPickOnBounds(true);
+        imageView.setMouseTransparent(false);
+        imageView.setFocusTraversable(true);
+        imageView.toFront();
+
+        Node parent = imageView.getParent();
+        if (parent != null) {
+            parent.setPickOnBounds(true);
+            parent.setMouseTransparent(false);
+        }
+
+        imageView.setOnMousePressed(this::handleBulgeMousePressed);
+        imageView.setOnMouseDragged(this::handleBulgeMousePressed);
+    }
+
+    @FXML
+    private void onBulgeStop(ActionEvent event) {
+        bulgeOn = false;
+        imageView.setCursor(Cursor.DEFAULT);
+        imageView.setOnMousePressed(null); // stop from detecting mouse clcik
+        imageView.setOnMouseDragged(null);
+    }
+
+    private void handleBulgeMousePressed(MouseEvent event) {
+        if (!(imageView.getImage() instanceof WritableImage)) {
+            return; // image is not writable
+        }
+
+        Image img = imageView.getImage();
+        if (img == null) {
+            return;
+        }
+
+        double imageWidth = img.getWidth();
+        double imageHeight = img.getHeight();
+        double viewWidth = imageView.getBoundsInLocal().getWidth();
+        double viewHeight = imageView.getBoundsInLocal().getHeight();
+        double scaleX = imageWidth / viewWidth;
+        double scaleY = imageHeight / viewHeight; // to make image boundaries the same size as imageview
+
+        int centerX = (int) (event.getX() * scaleX); // where click happens
+        int centerY = (int) (event.getY() * scaleY);
+
+        WritableImage writableImage = (WritableImage) imageView.getImage();
+        // PixelReader reader = currentImage.getPixelReader();
+        PixelWriter writer = writableImage.getPixelWriter();
+
+        // int width = (int) writableImage.getWidth();
+        int height = (int) writableImage.getHeight();
+        int width = (int) imageView.getImage().getWidth();
+        // int height = (int) imageView.getImage().getHeight();
+        double cx = width / 2;
+        double cy = height / 2;
+        // WritableImage writableImage = new WritableImage(width, height);
+        PixelReader reader = imageView.getImage().getPixelReader();
+        // PixelWriter writer = writableImage.getPixelWriter();
+
+
+        int startX = Math.max(centerX - radiusBulge, 0); // bounds of click
+        int endX = Math.min(centerX + radiusBulge, height - 1);
+        int startY = Math.max(centerY - radiusBulge, 0);
+        int endY = Math.min(centerY + radiusBulge, height - 1);
+
+        for (int x = startX; x <= endX; x++) {
+            for (int y = startY; y <= endY; y++) { // for click radius
+                for (int i = 0; i < width; i++) {
+                    for (int j = 0; j < height; j++) { // for image bounds
+        
+                        double dx = x - cx;
+                        double dy = y - cy;
+                        double r = Math.sqrt(dx * dx + dy * dy);
+                        double theta = Math.atan2(dy, dx);
+                        double rPrime = Math.pow(r, pValue) / sValue;
+                        int xPrime = (int) (cx + rPrime * Math.cos(theta));
+                        int yPrime = (int) (cy + rPrime * Math.sin(theta));
+        
+                        if (xPrime >= 0 && xPrime < width) {
+                            if (yPrime >= 0 && yPrime < height) {
+                                writer.setColor(x, y, reader.getColor(xPrime, yPrime));
+                            }
+                        }
+                    }
+                }
+                imageView.setImage(writableImage);
+            }
+        }
+    }
 
     // @FXML
     // void onSpotRemove(ActionEvent event) {
