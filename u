@@ -1,0 +1,44 @@
+private void handleBulgeMousePressed(MouseEvent event) {
+    WritableImage writableImage = (WritableImage) imageView.getImage();
+    PixelReader reader = writableImage.getPixelReader();
+    PixelWriter writer = writableImage.getPixelWriter();
+
+    double imageWidth = writableImage.getWidth();
+    double imageHeight = writableImage.getHeight();
+    double viewWidth = imageView.getBoundsInLocal().getWidth();
+    double viewHeight = imageView.getBoundsInLocal().getHeight();
+
+    double scaleX = imageWidth / viewWidth;
+    double scaleY = imageHeight / viewHeight;
+
+    int centerX = (int) (event.getX() * scaleX);
+    int centerY = (int) (event.getY() * scaleY);
+
+    double cx = centerX;
+    double cy = centerY;
+
+    int startX = Math.max(centerX - radiusBulge, 0);
+    int endX = Math.min(centerX + radiusBulge, (int) imageWidth - 1);
+    int startY = Math.max(centerY - radiusBulge, 0);
+    int endY = Math.min(centerY + radiusBulge, (int) imageHeight - 1);
+
+    for (int x = startX; x <= endX; x++) {
+        for (int y = startY; y <= endY; y++) {
+            double dx = x - cx;
+            double dy = y - cy;
+            double r = Math.sqrt(dx * dx + dy * dy);
+            if (r > radiusBulge) continue; // outside radius
+
+            double theta = Math.atan2(dy, dx);
+            double rPrime = Math.pow(r, pValue) / sValue;
+            int xPrime = (int) (cx + rPrime * Math.cos(theta));
+            int yPrime = (int) (cy + rPrime * Math.sin(theta));
+
+            if (xPrime >= 0 && xPrime < imageWidth && yPrime >= 0 && yPrime < imageHeight) {
+                writer.setColor(x, y, reader.getColor(xPrime, yPrime));
+            }
+        }
+    }
+
+    imageView.setImage(writableImage);
+}
