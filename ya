@@ -855,6 +855,10 @@ public class PrimaryController {
     }
 
     private void handleBulgeMousePressed(MouseEvent event) {
+        radiusBulge = 50;
+        double pValue = 1.5;
+        double sValue = 40.0;
+
         WritableImage writableImage = (WritableImage) imageView.getImage();
         PixelReader reader = writableImage.getPixelReader();
         PixelWriter writer = writableImage.getPixelWriter();
@@ -897,7 +901,6 @@ public class PrimaryController {
                 }
             }
         }
-
         imageView.setImage(writableImage);
     }
 
