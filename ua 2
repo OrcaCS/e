@@ -1,0 +1,56 @@
+private void handleBulgeMousePressed(MouseEvent event) {
+    radiusBulge = 50;          // radius in pixels
+    double pValue = 0.8;       // < 1 = bulge, > 1 = pinch
+
+    WritableImage writableImage = (WritableImage) imageView.getImage();
+    PixelReader reader = writableImage.getPixelReader();
+    PixelWriter writer = writableImage.getPixelWriter();
+
+    double imageWidth = writableImage.getWidth();
+    double imageHeight = writableImage.getHeight();
+    double viewWidth = imageView.getBoundsInLocal().getWidth();
+    double viewHeight = imageView.getBoundsInLocal().getHeight();
+
+    double scaleX = imageWidth / viewWidth;
+    double scaleY = imageHeight / viewHeight;
+
+    int centerX = (int) (event.getX() * scaleX);
+    int centerY = (int) (event.getY() * scaleY);
+
+    // Store a copy of the original pixels
+    Color[][] originalColors = new Color[(int) imageWidth][(int) imageHeight];
+    for (int x = 0; x < imageWidth; x++) {
+        for (int y = 0; y < imageHeight; y++) {
+            originalColors[x][y] = reader.getColor(x, y);
+        }
+    }
+
+    for (int x = centerX - radiusBulge; x <= centerX + radiusBulge; x++) {
+        for (int y = centerY - radiusBulge; y <= centerY + radiusBulge; y++) {
+
+            if (x < 0 || y < 0 || x >= imageWidth || y >= imageHeight) continue;
+
+            double dx = x - centerX;
+            double dy = y - centerY;
+            double r = Math.sqrt(dx * dx + dy * dy);
+
+            if (r > radiusBulge) continue;
+
+            double theta = Math.atan2(dy, dx);
+            double normalizedR = r / radiusBulge;
+            double distortedR = Math.pow(normalizedR, pValue);
+            double rPrime = distortedR * radiusBulge;
+
+            int xPrime = (int) (centerX + rPrime * Math.cos(theta));
+            int yPrime = (int) (centerY + rPrime * Math.sin(theta));
+
+            if (xPrime >= 0 && xPrime < imageWidth && yPrime >= 0 && yPrime < imageHeight) {
+                writer.setColor(x, y, originalColors[xPrime][yPrime]);
+            } else {
+                writer.setColor(x, y, originalColors[x][y]); // fallback
+            }
+        }
+    }
+
+    imageView.setImage(writableImage);
+}
