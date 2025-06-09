@@ -854,11 +854,9 @@ public class PrimaryController {
         imageView.setOnMouseDragged(null);
     }
 
-    // WRITE SLIDER FOR RADIUS AND BULGE/PINCH EHRE
-
     private void handleBulgeMousePressed(MouseEvent event) {
-        radiusBulge = 30;
-        double pValue = 1.2; // smaller than 1 is bulge and less than 1 is pinch
+        radiusBulge = 30; // radius in pixels
+        double pValue = 1.2; // < 1 = bulge, > 1 = pinch
 
         WritableImage writableImage = (WritableImage) imageView.getImage();
         PixelReader reader = writableImage.getPixelReader();
@@ -875,6 +873,7 @@ public class PrimaryController {
         int centerX = (int) (event.getX() * scaleX);
         int centerY = (int) (event.getY() * scaleY);
 
+        // Store a copy of the original pixels
         Color[][] originalColors = new Color[(int) imageWidth][(int) imageHeight];
         for (int x = 0; x < imageWidth; x++) {
             for (int y = 0; y < imageHeight; y++) {
@@ -910,10 +909,12 @@ public class PrimaryController {
                 }
             }
         }
+
         imageView.setImage(writableImage);
     }
 
-    // below is a method idea that was given up on and not implemented.
+    // }
+
     // @FXML
     // void onSpotRemove(ActionEvent event) {
     // on mouse right click
@@ -922,6 +923,108 @@ public class PrimaryController {
     // on left click, in a radius, print out the right click spot
     // for bonus, make it airbrush??
     // ^^^ WHEN FADE OUT AWAY FROM CENTER, LESS OPACITY
+
+    // private void initialize() {
+    // imageView.setOnMouseClicked(this::handleMouseClick);
+    // }
+
+    // private void handleMouseClick(MouseEvent event) {
+    // int centerX;
+    // int centerY;
+
+    // int RADIUS = 5;
+
+    // int width = (int) imageView.getImage().getWidth(); // MAYBE FIX CONVERSION
+    // INT??
+    // int height = (int) imageView.getImage().getHeight();
+
+    // WritableImage writableImage = new WritableImage(width, height);
+    // PixelReader reader = imageView.getImage().getPixelReader();
+    // PixelWriter writer = writableImage.getPixelWriter();
+
+    // if (event.getButton() == MouseButton.PRIMARY) {
+    // for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) {
+    // for (int y = centerY - RADIUS; y <= centerY + RADIUS; y++) {
+    // if (x >= 0 && x < width && y >= 0 && y < height) {
+    // double dx = x - centerX;
+    // double dy = y - centerY;
+    // if (dx * dx + dy * dy <= RADIUS * RADIUS) {
+    // writer.setColor(x, y, Color.BLUEVIOLET); // YOU ARE DOING FIX. MAKE IT COPY
+    // THE CIRCLE AREA.
+    // }
+    // }
+    // }
+    // }
+    // } else if (event.getButton() == MouseButton.SECONDARY) {
+    // centerX = (int) event.getX();
+    // centerY = (int) event.getY();
+    // }
+    // }
+    // }
+
+    private Color[][] copiedRegion = null;
+private int regionRadius = 50; // radius of the region to copy/paste
+private boolean hasCopied = false;
+
+@FXML
+private void onMouseCopyPaste(MouseEvent event) {
+    if (!(imageView.getImage() instanceof WritableImage)) return;
+
+    WritableImage image = (WritableImage) imageView.getImage();
+    PixelReader reader = image.getPixelReader();
+    PixelWriter writer = image.getPixelWriter();
+
+    double imageWidth = image.getWidth();
+    double imageHeight = image.getHeight();
+    double viewWidth = imageView.getBoundsInLocal().getWidth();
+    double viewHeight = imageView.getBoundsInLocal().getHeight();
+
+    double scaleX = imageWidth / viewWidth;
+    double scaleY = imageHeight / viewHeight;
+
+    int clickX = (int) (event.getX() * scaleX);
+    int clickY = (int) (event.getY() * scaleY);
+
+    if (event.getButton() == MouseButton.SECONDARY) {
+        // COPY: right-click
+        copiedRegion = new Color[2 * regionRadius + 1][2 * regionRadius + 1];
+        for (int dx = -regionRadius; dx <= regionRadius; dx++) {
+            for (int dy = -regionRadius; dy <= regionRadius; dy++) {
+                int srcX = clickX + dx;
+                int srcY = clickY + dy;
+
+                if (dx * dx + dy * dy <= regionRadius * regionRadius &&
+                    srcX >= 0 && srcX < imageWidth &&
+                    srcY >= 0 && srcY < imageHeight) {
+                    copiedRegion[dx + regionRadius][dy + regionRadius] = reader.getColor(srcX, srcY);
+                }
+            }
+        }
+        hasCopied = true;
+        System.out.println("Copied region at (" + clickX + ", " + clickY + ")");
+    }
+
+    if (event.getButton() == MouseButton.PRIMARY && hasCopied) {
+        // PASTE: left-click
+        for (int dx = -regionRadius; dx <= regionRadius; dx++) {
+            for (int dy = -regionRadius; dy <= regionRadius; dy++) {
+                int destX = clickX + dx;
+                int destY = clickY + dy;
+
+                if (dx * dx + dy * dy <= regionRadius * regionRadius &&
+                    destX >= 0 && destX < imageWidth &&
+                    destY >= 0 && destY < imageHeight) {
+                    Color color = copiedRegion[dx + regionRadius][dy + regionRadius];
+                    if (color != null) {
+                        writer.setColor(destX, destY, color);
+                    }
+                }
+            }
+        }
+        imageView.setImage(image); // refresh image view
+        System.out.println("Pasted region at (" + clickX + ", " + clickY + ")");
+    }
+}
 
     // DO NOT REMOVE THIS METHOD!
     public void setStage(Stage stage) {
