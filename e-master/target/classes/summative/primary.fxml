@@ -115,6 +115,8 @@
                         </VBox>
                      </graphic></MenuItem>
                   <MenuItem fx:id="drawStop" mnemonicParsing="false" onAction="#onDrawStop" text="Stop Draw" />
+                  <MenuItem fx:id="mouseBulge" mnemonicParsing="false" onAction="#onMouseBulge" text="Mouse Bulge" />
+                  <MenuItem fx:id="mouseBulgeStop" mnemonicParsing="false" onAction="#onBulgeStop" text="Stop Mouse Bulge" />
               </items>
             </Menu>
       </menus>
