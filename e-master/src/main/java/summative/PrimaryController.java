@@ -796,7 +796,7 @@ public class PrimaryController {
         int startX = Math.max(centerX - radius, 0);
         int endX = Math.min(centerX + radius, height - 1);
         int startY = Math.max(centerY - radius, 0);
-        int endY = Math.min(centerY + radius, height - 1);
+        int endY = Math.min(centerY + radius, height - 1); // same to ensure circle
 
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
@@ -809,24 +809,6 @@ public class PrimaryController {
     void onColorPickerDraw(ActionEvent event) {
         colorPickedDraw = colorPickerDraw.getValue();
     }
-
-    // @FXML
-    // void onMouseBulge(ActionEvent event) {
-    // on mouse click
-    // grab location
-    // set a radius using slider
-    // slap in bulge code but mini (for each pixel in radius/circle)
-    // maybe add a mouse cursor with circle
-
-    // double dx = x - centerX;
-    // double dy = y - centerY;
-    // if (Math.sqrt(dx * dx + dy * dy <= RADIUS)) { // if x-circle length^2 +
-    // y-circle length^2 is in distance^2 from pythagorean theorem
-    // distance = Math.sqrt(x^2 + y^2)
-    // writer.setColor(x, y, Color.BLUEVIOLET); // FIX COLOR TO BULGE
-    // }
-
-    // }
 
     @FXML
     private void onMouseBulge(ActionEvent event) {
@@ -872,71 +854,66 @@ public class PrimaryController {
         imageView.setOnMouseDragged(null);
     }
 
+    // WRITE SLIDER FOR RADIUS AND BULGE/PINCH EHRE
+
     private void handleBulgeMousePressed(MouseEvent event) {
-        if (!(imageView.getImage() instanceof WritableImage)) {
-            return; // image is not writable
-        }
-
-        Image img = imageView.getImage();
-        if (img == null) {
-            return;
-        }
-
-        double imageWidth = img.getWidth();
-        double imageHeight = img.getHeight();
-        double viewWidth = imageView.getBoundsInLocal().getWidth();
-        double viewHeight = imageView.getBoundsInLocal().getHeight();
-        double scaleX = imageWidth / viewWidth;
-        double scaleY = imageHeight / viewHeight; // to make image boundaries the same size as imageview
-
-        int centerX = (int) (event.getX() * scaleX); // where click happens
-        int centerY = (int) (event.getY() * scaleY);
+        radiusBulge = 30;
+        double pValue = 1.2; // smaller than 1 is bulge and less than 1 is pinch
 
         WritableImage writableImage = (WritableImage) imageView.getImage();
-        // PixelReader reader = currentImage.getPixelReader();
+        PixelReader reader = writableImage.getPixelReader();
         PixelWriter writer = writableImage.getPixelWriter();
 
-        // int width = (int) writableImage.getWidth();
-        int height = (int) writableImage.getHeight();
-        int width = (int) imageView.getImage().getWidth();
-        // int height = (int) imageView.getImage().getHeight();
-        double cx = width / 2;
-        double cy = height / 2;
-        // WritableImage writableImage = new WritableImage(width, height);
-        PixelReader reader = imageView.getImage().getPixelReader();
-        // PixelWriter writer = writableImage.getPixelWriter();
+        double imageWidth = writableImage.getWidth();
+        double imageHeight = writableImage.getHeight();
+        double viewWidth = imageView.getBoundsInLocal().getWidth();
+        double viewHeight = imageView.getBoundsInLocal().getHeight();
 
+        double scaleX = imageWidth / viewWidth;
+        double scaleY = imageHeight / viewHeight;
 
-        int startX = Math.max(centerX - radiusBulge, 0); // bounds of click
-        int endX = Math.min(centerX + radiusBulge, height - 1);
-        int startY = Math.max(centerY - radiusBulge, 0);
-        int endY = Math.min(centerY + radiusBulge, height - 1);
+        int centerX = (int) (event.getX() * scaleX);
+        int centerY = (int) (event.getY() * scaleY);
 
-        for (int x = startX; x <= endX; x++) {
-            for (int y = startY; y <= endY; y++) { // for click radius
-                for (int i = 0; i < width; i++) {
-                    for (int j = 0; j < height; j++) { // for image bounds
-        
-                        double dx = x - cx;
-                        double dy = y - cy;
-                        double r = Math.sqrt(dx * dx + dy * dy);
-                        double theta = Math.atan2(dy, dx);
-                        double rPrime = Math.pow(r, pValue) / sValue;
-                        int xPrime = (int) (cx + rPrime * Math.cos(theta));
-                        int yPrime = (int) (cy + rPrime * Math.sin(theta));
-        
-                        if (xPrime >= 0 && xPrime < width) {
-                            if (yPrime >= 0 && yPrime < height) {
-                                writer.setColor(x, y, reader.getColor(xPrime, yPrime));
-                            }
-                        }
-                    }
-                }
-                imageView.setImage(writableImage);
+        Color[][] originalColors = new Color[(int) imageWidth][(int) imageHeight];
+        for (int x = 0; x < imageWidth; x++) {
+            for (int y = 0; y < imageHeight; y++) {
+                originalColors[x][y] = reader.getColor(x, y);
             }
         }
+
+        for (int x = centerX - radiusBulge; x <= centerX + radiusBulge; x++) {
+            for (int y = centerY - radiusBulge; y <= centerY + radiusBulge; y++) {
+
+                if (x < 0 || y < 0 || x >= imageWidth || y >= imageHeight)
+                    continue;
+
+                double dx = x - centerX;
+                double dy = y - centerY;
+                double r = Math.sqrt(dx * dx + dy * dy);
+
+                if (r > radiusBulge)
+                    continue;
+
+                double theta = Math.atan2(dy, dx);
+                double normalizedR = r / radiusBulge;
+                double distortedR = Math.pow(normalizedR, pValue);
+                double rPrime = distortedR * radiusBulge;
+
+                int xPrime = (int) (centerX + rPrime * Math.cos(theta));
+                int yPrime = (int) (centerY + rPrime * Math.sin(theta));
+
+                if (xPrime >= 0 && xPrime < imageWidth && yPrime >= 0 && yPrime < imageHeight) {
+                    writer.setColor(x, y, originalColors[xPrime][yPrime]);
+                } else {
+                    writer.setColor(x, y, originalColors[x][y]); // fallback
+                }
+            }
+        }
+        imageView.setImage(writableImage);
     }
 
+    // below is a method idea that was given up on and not implemented.
     // @FXML
     // void onSpotRemove(ActionEvent event) {
     // on mouse right click
@@ -945,44 +922,6 @@ public class PrimaryController {
     // on left click, in a radius, print out the right click spot
     // for bonus, make it airbrush??
     // ^^^ WHEN FADE OUT AWAY FROM CENTER, LESS OPACITY
-
-    // private void initialize() {
-    // imageView.setOnMouseClicked(this::handleMouseClick);
-    // }
-
-    // private void handleMouseClick(MouseEvent event) {
-    // int centerX;
-    // int centerY;
-
-    // int RADIUS = 5;
-
-    // int width = (int) imageView.getImage().getWidth(); // MAYBE FIX CONVERSION
-    // INT??
-    // int height = (int) imageView.getImage().getHeight();
-
-    // WritableImage writableImage = new WritableImage(width, height);
-    // PixelReader reader = imageView.getImage().getPixelReader();
-    // PixelWriter writer = writableImage.getPixelWriter();
-
-    // if (event.getButton() == MouseButton.PRIMARY) {
-    // for (int x = centerX - RADIUS; x <= centerX + RADIUS; x++) {
-    // for (int y = centerY - RADIUS; y <= centerY + RADIUS; y++) {
-    // if (x >= 0 && x < width && y >= 0 && y < height) {
-    // double dx = x - centerX;
-    // double dy = y - centerY;
-    // if (dx * dx + dy * dy <= RADIUS * RADIUS) {
-    // writer.setColor(x, y, Color.BLUEVIOLET); // YOU ARE DOING FIX. MAKE IT COPY
-    // THE CIRCLE AREA.
-    // }
-    // }
-    // }
-    // }
-    // } else if (event.getButton() == MouseButton.SECONDARY) {
-    // centerX = (int) event.getX();
-    // centerY = (int) event.getY();
-    // }
-    // }
-    // }
 
     // DO NOT REMOVE THIS METHOD!
     public void setStage(Stage stage) {
